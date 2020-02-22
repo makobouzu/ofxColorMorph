@@ -695,6 +695,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
+					src,
 					../../../addons/ofxColorMorph/src,
 					../../../addons/ofxColorMorph/src/ofxColorMorph,
 				);
@@ -719,6 +720,7 @@
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "APPSTORE=1";
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
+					src,
 					src,
 					../../../addons/ofxColorMorph/src,
 					../../../addons/ofxColorMorph/src/ofxColorMorph,
@@ -762,6 +764,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
+					src,
 					../../../addons/ofxColorMorph/src,
 					../../../addons/ofxColorMorph/src/ofxColorMorph,
 				);
@@ -798,6 +801,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
+					src,
 					../../../addons/ofxColorMorph/src,
 					../../../addons/ofxColorMorph/src/ofxColorMorph,
 				);
@@ -822,6 +826,7 @@
 				GCC_MODEL_TUNING = NONE;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
+					src,
 					src,
 					../../../addons/ofxColorMorph/src,
 					../../../addons/ofxColorMorph/src/ofxColorMorph,
@@ -853,6 +858,7 @@
 				GCC_MODEL_TUNING = NONE;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
+					src,
 					src,
 					../../../addons/ofxColorMorph/src,
 					../../../addons/ofxColorMorph/src/ofxColorMorph,

@@ -12,8 +12,9 @@ public:
     void update();
     void draw();
 private:
-    glm::vec3 left   = {100, 300, 0.0};
-    glm::vec3 right  = {500, 300, 0.0};
-    ofColor leftCol  = {255,   0,   0};
-    ofColor rightCol = {  0, 255,   0};
+    ofColor col1  = {255,   0,   0};
+    ofColor col2 = {  0, 255,   0};
+
+    std::vector<std::pair<glm::vec3, ofColor>> colorPalette;
+    std::vector<string> types;
 };
