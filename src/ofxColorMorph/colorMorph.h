@@ -308,37 +308,50 @@ inline ofColor CMY2RGB(const glm::vec3 CMY){
 //--------------------------------------------------------------
 inline glm::vec4 RGB2CMYK(const ofColor& color){
     glm::vec4 CMYK;
-    glm::vec3 CMY;
+//    glm::vec3 CMY;
+//    CMY = RGB2CMY(color);
+    float r = color.r / 255;
+    float g = color.g / 255;
+    float b = color.b / 255;
     
-    CMY = RGB2CMY(color);
+    
     
     float k = 1.0;
-    k = std::min(k, CMY.x);
-    k = std::min(k, CMY.y);
-    k = std::min(k, CMY.z);
+    k = std::min(k, 1-r);
+    k = std::min(k, 1-g);
+    k = std::min(k, 1-b);
     
     CMYK.a = k;
-    if (std::abs(CMYK.a - 1) < 1e-3) {
-        CMYK.r = 0;
-        CMYK.g = 0;
-        CMYK.b = 0;
-    }
-    else {
-        CMYK.r = (CMYK.r - k) / (1 - k);
-        CMYK.g = (CMYK.g - k) / (1 - k);
-        CMYK.b = (CMYK.b - k) / (1 - k);
-    }
+    CMYK.r = (1- r - k) / (1 - k);
+    CMYK.g = (1- g - k) / (1 - k);
+    CMYK.b = (1- b - k) / (1 - k);
+//    if (std::abs(CMYK.a - 1) < 1e-3) {
+//        CMYK.r = 0;
+//        CMYK.g = 0;
+//        CMYK.b = 0;
+//    }
+//    else {
+//        CMYK.r = (CMYK.r - k) / (1 - k);
+//        CMYK.g = (CMYK.g - k) / (1 - k);
+//        CMYK.b = (CMYK.b - k) / (1 - k);
+//    }
     return CMYK;
 }
 
 inline ofColor CMYK2RGB(const glm::vec4 CMYK){
     ofColor color;
-    glm::vec3 CMY;
-    
-    CMY.x = CMYK.r * (1 - CMYK.a) + CMYK.a;
-    CMY.y = CMYK.g * (1 - CMYK.a) + CMYK.a;
-    CMY.z = CMYK.b * (1 - CMYK.a) + CMYK.a;
-    color = CMY2RGB(CMY);
+//    glm::vec3 CMY;
+//
+//    CMY.x = CMYK.r * (1 - CMYK.a) + CMYK.a;
+//    CMY.y = CMYK.g * (1 - CMYK.a) + CMYK.a;
+//    CMY.z = CMYK.b * (1 - CMYK.a) + CMYK.a;
+//    color = CMY2RGB(CMY);
+    float r = 1 - (CMYK.r*(1 - CMYK.a) + CMYK.a);
+    float g = 1 - (CMYK.g*(1 - CMYK.a) + CMYK.a);
+    float b = 1 - (CMYK.b*(1 - CMYK.a) + CMYK.a);
+    color.r = r * 255;
+    color.g = g * 255;
+    color.b = b * 255;
     return color;
 }
 
