@@ -16,7 +16,7 @@ void ofApp::setup(){
         }
     }
     
-    types = {"RGB", "HSL", "HSB", "HSV", "LUV", "LAB", "HunterLAB", "LCH", "CMY", "CMYK", "YXY"};
+    types = {"RGB", "HSL", "HSV", "HSB", "LUV", "LAB", "HunterLAB", "LCH", "CMY", "CMYK", "YXY"};
 }
 
 //--------------------------------------------------------------

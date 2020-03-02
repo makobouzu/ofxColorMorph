@@ -12,7 +12,7 @@ namespace ofx{
 namespace colorMorph{
 
 enum class colorType{
-    RGB, HSL, HSB, HSV, LUV, LAB, HunterLAB, LCH, CMY, CMYK, YXY
+    RGB, HSL, HSV, HSB, LUV, LAB, HunterLAB, LCH, CMY, CMYK, YXY
 };
 
 namespace detail{
@@ -41,6 +41,43 @@ inline float HUE2RGB(float v1, float v2, float vh){
     if (2 * vh < 1) return v2;
     if (3 * vh < 2) return v1 + (v2 - v1)*(2.0 / 3.0 - vh) * 6;
     return v1;
+}
+
+//--------------------------------------------------------------
+inline glm::vec3 RGB2XYZ(const ofColor& color){
+    glm::vec3 XYZ;
+    float r = color.r / 255.0;
+    float g = color.g / 255.0;
+    float b = color.b / 255.0;
+
+    r = ((r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4) : (r / 12.92)) * 100.0;
+    g = ((g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4) : (g / 12.92)) * 100.0;
+    b = ((b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4) : (b / 12.92)) * 100.0;
+
+    XYZ.x = r*0.4124564 + g*0.3575761 + b*0.1804375;
+    XYZ.y = r*0.2126729 + g*0.7151522 + b*0.0721750;
+    XYZ.z = r*0.0193339 + g*0.1191920 + b*0.9503041;
+    return XYZ;
+}
+
+inline ofColor   XYZ2RGB(const glm::vec3& XYZ){
+    ofColor color;
+    float x = XYZ.x / 100.0;
+    float y = XYZ.y / 100.0;
+    float z = XYZ.z / 100.0;
+
+    float r = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
+    float g = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
+    float b = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
+
+    r = ((r > 0.0031308) ? (1.055*pow(r, 1 / 2.4) - 0.055) : (12.92*r)) * 255.0;
+    g = ((g > 0.0031308) ? (1.055*pow(g, 1 / 2.4) - 0.055) : (12.92*g)) * 255.0;
+    b = ((b > 0.0031308) ? (1.055*pow(b, 1 / 2.4) - 0.055) : (12.92*b)) * 255.0;
+    
+    color.r = r;
+    color.g = g;
+    color.b = b;
+    return color;
 }
 
 //--------------------------------------------------------------
@@ -103,255 +140,6 @@ inline ofColor   HSL2RGB(const glm::vec3& HSL){
         color.g = 255 * HUE2RGB(temp1, temp2, h);
         color.b = 255 * HUE2RGB(temp1, temp2, h - 1.0 / 3.0);
     }
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec3 RGB2XYZ(const ofColor& color){
-    glm::vec3 XYZ;
-    float r = color.r / 255.0;
-    float g = color.g / 255.0;
-    float b = color.b / 255.0;
-
-    r = ((r > 0.04045) ? pow((r + 0.055) / 1.055, 2.4) : (r / 12.92)) * 100.0;
-    g = ((g > 0.04045) ? pow((g + 0.055) / 1.055, 2.4) : (g / 12.92)) * 100.0;
-    b = ((b > 0.04045) ? pow((b + 0.055) / 1.055, 2.4) : (b / 12.92)) * 100.0;
-
-    XYZ.x = r*0.4124564 + g*0.3575761 + b*0.1804375;
-    XYZ.y = r*0.2126729 + g*0.7151522 + b*0.0721750;
-    XYZ.z = r*0.0193339 + g*0.1191920 + b*0.9503041;
-    return XYZ;
-}
-
-inline ofColor   XYZ2RGB(const glm::vec3& XYZ){
-    ofColor color;
-    float x = XYZ.x / 100.0;
-    float y = XYZ.y / 100.0;
-    float z = XYZ.z / 100.0;
-
-    float r = x * 3.2404542 + y * -1.5371385 + z * -0.4985314;
-    float g = x * -0.9692660 + y * 1.8760108 + z * 0.0415560;
-    float b = x * 0.0556434 + y * -0.2040259 + z * 1.0572252;
-
-    r = ((r > 0.0031308) ? (1.055*pow(r, 1 / 2.4) - 0.055) : (12.92*r)) * 255.0;
-    g = ((g > 0.0031308) ? (1.055*pow(g, 1 / 2.4) - 0.055) : (12.92*g)) * 255.0;
-    b = ((b > 0.0031308) ? (1.055*pow(b, 1 / 2.4) - 0.055) : (12.92*b)) * 255.0;
-    
-    color.r = r;
-    color.g = g;
-    color.b = b;
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec3 RGB2LAB(const ofColor& color){
-    glm::vec3 LAB;
-    glm::vec3 XYZ;
-    
-    XYZ = RGB2XYZ(color);
-
-    float x = XYZ.x / 95.047;
-    float y = XYZ.y / 100.00;
-    float z = XYZ.z / 108.883;
-
-    x = (x > 0.008856) ? cbrt(x) : (7.787 * x + 16.0 / 116.0);
-    y = (y > 0.008856) ? cbrt(y) : (7.787 * y + 16.0 / 116.0);
-    z = (z > 0.008856) ? cbrt(z) : (7.787 * z + 16.0 / 116.0);
-
-    LAB.x = (116.0 * y) - 16;
-    LAB.y = 500 * (x - y);
-    LAB.z = 200 * (y - z);
-    return LAB;
-}
-
-inline ofColor LAB2RGB(const glm::vec3& LAB){
-    ofColor color;
-    float y = (LAB.x + 16.0) / 116.0;
-    float x = LAB.y / 500.0 + y;
-    float z = y - LAB.z / 200.0;
-    
-    float x3 = pow(x, 3.);
-    float y3 = pow(y, 3.);
-    float z3 = pow(z, 3.);
-    
-    x = ((x3 > 0.008856) ? x3 : ((x - 16.0 / 116.0) / 7.787)) * 95.047;
-    y = ((y3 > 0.008856) ? y3 : ((y - 16.0 / 116.0) / 7.787)) * 100.0;
-    z = ((z3 > 0.008856) ? z3 : ((z - 16.0 / 116.0) / 7.787)) * 108.883;
-    
-    glm::vec3 XYZ = {x, y, z};
-    color = XYZ2RGB(XYZ);
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec3 RGB2LCH(const ofColor& color){
-    glm::vec3 LCH;
-    glm::vec3 LAB;
-    LAB = RGB2LAB(color);
-    
-    float l = LAB.x;
-    float c = sqrt(LAB.y*LAB.y + LAB.z*LAB.z);
-    float h = atan2(LAB.z, LAB.y);
-    
-    h = h / M_PI * 180;
-    if (h < 0) {
-        h += 360;
-    }
-    else if (h >= 360) {
-        h -= 360;
-    }
-    LCH.x = l;
-    LCH.y = c;
-    LCH.z = h;
-    return LCH;
-}
-inline ofColor   LCH2RGB(const glm::vec3& LCH){
-    ofColor color;
-    glm::vec3 LAB, LCH_;
-    LCH_ = LCH;
-    
-    LCH_.z = LCH.z * (M_PI / 180);
-    
-    LAB.x = LCH_.x;
-    LAB.y = cos(LCH_.z)*LCH_.y;
-    LAB.z = sin(LCH_.z)*LCH_.y;
-    
-    color = LAB2RGB(LAB);
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec3 RGB2LUV(const ofColor& color){
-    glm::vec3 LUV;
-    const glm::vec3 white = whiteReference;
-    glm::vec3 XYZ;
-    
-    XYZ = RGB2XYZ(color);
-    
-    float y = XYZ.y / white.y;
-    float temp = (XYZ.x + 15 * XYZ.y + 3 * XYZ.z);
-    float tempr = (white.x + 15 * white.y + 3 * white.z);
-    
-    
-    LUV.x = (y > eps) ? (116 * cbrt(y) - 16) : (kappa*y);
-    LUV.y = 52 * LUV.x * (((temp > 1e-3) ? (XYZ.x / temp) : 0) - white.x / tempr);
-    LUV.z = 117 * LUV.x * (((temp > 1e-3) ? (XYZ.y / temp) : 0) - white.y / tempr);
-    return LUV;
-}
-
-inline ofColor LUV2RGB(const glm::vec3 LUV){
-    ofColor color;
-    glm::vec3 white = whiteReference;
-    glm::vec3 XYZ;
-    
-    float y = (LUV.x > eps*kappa) ? pow((LUV.x + 16) / 116, 3) : (LUV.x / kappa);
-    float tempr = white.x + 15 * white.y + 3 * white.z;
-    float up = 4 * white.x / tempr;
-    float vp = 9 * white.y / tempr;
-    
-    float a = 1. / 3. * (52 * LUV.x / (LUV.y+ 13 * LUV.x*up) - 1);
-    float b = -5 * y;
-    float x = (y*(39 * LUV.x / (LUV.z + 13 * LUV.x*vp) - 5) - b) / (a + 1. / 3.);
-    float z = x*a + b;
-    
-    XYZ.x = x * 100;
-    XYZ.y = y * 100;
-    XYZ.z = z * 100;
-    
-    color = XYZ2RGB(XYZ);
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec3 RGB2YXY(const ofColor& color){
-    glm::vec3 YXY;
-    glm::vec3 XYZ;
-    
-    XYZ = RGB2XYZ(color);
-    
-    float temp = XYZ.x + XYZ.y + XYZ.z;
-    YXY.x = XYZ.y;
-    YXY.y = (temp==0) ? 0 : (XYZ.x / temp);
-    YXY.z = (temp==0) ? 0 : (XYZ.y / temp);
-    return YXY;
-}
-
-inline ofColor YXY2RGB(const glm::vec3& YXY){
-    ofColor color;
-    glm::vec3 RGB;
-    glm::vec3 XYZ;
-           
-    XYZ.x = YXY.y*(YXY.x / YXY.z);
-    XYZ.y = YXY.x;
-    XYZ.z = (1 - YXY.y - YXY.z)*(YXY.x / YXY.z);
-    color = XYZ2RGB(XYZ);
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec3 RGB2CMY(const ofColor& color){
-    glm::vec3 CMY;
-    CMY.x = 1 - color.r / 255;
-    CMY.y = 1 - color.g / 255;
-    CMY.z = 1 - color.b / 255;
-    return CMY;
-}
-
-inline ofColor CMY2RGB(const glm::vec3 CMY){
-    ofColor color;
-    color.r = (1 - CMY.x) * 255;
-    color.g = (1 - CMY.y) * 255;
-    color.b = (1 - CMY.z) * 255;
-    return color;
-}
-
-//--------------------------------------------------------------
-inline glm::vec4 RGB2CMYK(const ofColor& color){
-    glm::vec4 CMYK;
-//    glm::vec3 CMY;
-//    CMY = RGB2CMY(color);
-    float r = color.r / 255;
-    float g = color.g / 255;
-    float b = color.b / 255;
-    
-    
-    
-    float k = 1.0;
-    k = std::min(k, 1-r);
-    k = std::min(k, 1-g);
-    k = std::min(k, 1-b);
-    
-    CMYK.a = k;
-    CMYK.r = (1- r - k) / (1 - k);
-    CMYK.g = (1- g - k) / (1 - k);
-    CMYK.b = (1- b - k) / (1 - k);
-//    if (std::abs(CMYK.a - 1) < 1e-3) {
-//        CMYK.r = 0;
-//        CMYK.g = 0;
-//        CMYK.b = 0;
-//    }
-//    else {
-//        CMYK.r = (CMYK.r - k) / (1 - k);
-//        CMYK.g = (CMYK.g - k) / (1 - k);
-//        CMYK.b = (CMYK.b - k) / (1 - k);
-//    }
-    return CMYK;
-}
-
-inline ofColor CMYK2RGB(const glm::vec4 CMYK){
-    ofColor color;
-//    glm::vec3 CMY;
-//
-//    CMY.x = CMYK.r * (1 - CMYK.a) + CMYK.a;
-//    CMY.y = CMYK.g * (1 - CMYK.a) + CMYK.a;
-//    CMY.z = CMYK.b * (1 - CMYK.a) + CMYK.a;
-//    color = CMY2RGB(CMY);
-    float r = 1 - (CMYK.r*(1 - CMYK.a) + CMYK.a);
-    float g = 1 - (CMYK.g*(1 - CMYK.a) + CMYK.a);
-    float b = 1 - (CMYK.b*(1 - CMYK.a) + CMYK.a);
-    color.r = r * 255;
-    color.g = g * 255;
-    color.b = b * 255;
     return color;
 }
 
@@ -456,6 +244,88 @@ inline ofColor HSB2RGB(const glm::vec3& HSB){
 }
 
 //--------------------------------------------------------------
+inline glm::vec3 RGB2LUV(const ofColor& color){
+    glm::vec3 LUV;
+    const glm::vec3 white = whiteReference;
+    glm::vec3 XYZ;
+    
+    XYZ = RGB2XYZ(color);
+    
+    float y = XYZ.y / white.y;
+    float temp = (XYZ.x + 15 * XYZ.y + 3 * XYZ.z);
+    float tempr = (white.x + 15 * white.y + 3 * white.z);
+    
+    
+    LUV.x = (y > eps) ? (116 * cbrt(y) - 16) : (kappa*y);
+    LUV.y = 52 * LUV.x * (((temp > 1e-3) ? (XYZ.x / temp) : 0) - white.x / tempr);
+    LUV.z = 117 * LUV.x * (((temp > 1e-3) ? (XYZ.y / temp) : 0) - white.y / tempr);
+    return LUV;
+}
+
+inline ofColor LUV2RGB(const glm::vec3 LUV){
+    ofColor color;
+    glm::vec3 white = whiteReference;
+    glm::vec3 XYZ;
+    
+    float y = (LUV.x > eps*kappa) ? pow((LUV.x + 16) / 116, 3) : (LUV.x / kappa);
+    float tempr = white.x + 15 * white.y + 3 * white.z;
+    float up = 4 * white.x / tempr;
+    float vp = 9 * white.y / tempr;
+    
+    float a = 1. / 3. * (52 * LUV.x / (LUV.y+ 13 * LUV.x*up) - 1);
+    float b = -5 * y;
+    float x = (y*(39 * LUV.x / (LUV.z + 13 * LUV.x*vp) - 5) - b) / (a + 1. / 3.);
+    float z = x*a + b;
+    
+    XYZ.x = x * 100;
+    XYZ.y = y * 100;
+    XYZ.z = z * 100;
+    
+    color = XYZ2RGB(XYZ);
+    return color;
+}
+
+//--------------------------------------------------------------
+inline glm::vec3 RGB2LAB(const ofColor& color){
+    glm::vec3 LAB;
+    glm::vec3 XYZ;
+    
+    XYZ = RGB2XYZ(color);
+
+    float x = XYZ.x / 95.047;
+    float y = XYZ.y / 100.00;
+    float z = XYZ.z / 108.883;
+
+    x = (x > 0.008856) ? cbrt(x) : (7.787 * x + 16.0 / 116.0);
+    y = (y > 0.008856) ? cbrt(y) : (7.787 * y + 16.0 / 116.0);
+    z = (z > 0.008856) ? cbrt(z) : (7.787 * z + 16.0 / 116.0);
+
+    LAB.x = (116.0 * y) - 16;
+    LAB.y = 500 * (x - y);
+    LAB.z = 200 * (y - z);
+    return LAB;
+}
+
+inline ofColor LAB2RGB(const glm::vec3& LAB){
+    ofColor color;
+    float y = (LAB.x + 16.0) / 116.0;
+    float x = LAB.y / 500.0 + y;
+    float z = y - LAB.z / 200.0;
+    
+    float x3 = pow(x, 3.);
+    float y3 = pow(y, 3.);
+    float z3 = pow(z, 3.);
+    
+    x = ((x3 > 0.008856) ? x3 : ((x - 16.0 / 116.0) / 7.787)) * 95.047;
+    y = ((y3 > 0.008856) ? y3 : ((y - 16.0 / 116.0) / 7.787)) * 100.0;
+    z = ((z3 > 0.008856) ? z3 : ((z - 16.0 / 116.0) / 7.787)) * 108.883;
+    
+    glm::vec3 XYZ = {x, y, z};
+    color = XYZ2RGB(XYZ);
+    return color;
+}
+
+//--------------------------------------------------------------
 inline glm::vec3 RGB2HunterLAB(const ofColor& color){
     glm::vec3 HunterLAB;
     glm::vec3 XYZ;
@@ -478,6 +348,137 @@ inline ofColor HunterLAB2RGB(const glm::vec3& HunterLAB){
     color = XYZ2RGB(XYZ);
     return color;
 }
+
+//--------------------------------------------------------------
+inline glm::vec3 RGB2LCH(const ofColor& color){
+    glm::vec3 LCH;
+    glm::vec3 LAB;
+    LAB = RGB2LAB(color);
+    
+    float l = LAB.x;
+    float c = sqrt(LAB.y*LAB.y + LAB.z*LAB.z);
+    float h = atan2(LAB.z, LAB.y);
+    
+    h = h / M_PI * 180;
+    if (h < 0) {
+        h += 360;
+    }
+    else if (h >= 360) {
+        h -= 360;
+    }
+    LCH.x = l;
+    LCH.y = c;
+    LCH.z = h;
+    return LCH;
+}
+inline ofColor   LCH2RGB(const glm::vec3& LCH){
+    ofColor color;
+    glm::vec3 LAB, LCH_;
+    LCH_ = LCH;
+    
+    LCH_.z = LCH.z * (M_PI / 180);
+    
+    LAB.x = LCH_.x;
+    LAB.y = cos(LCH_.z)*LCH_.y;
+    LAB.z = sin(LCH_.z)*LCH_.y;
+    
+    color = LAB2RGB(LAB);
+    return color;
+}
+
+//--------------------------------------------------------------
+inline glm::vec3 RGB2CMY(const ofColor& color){
+    glm::vec3 CMY;
+    CMY.x = 1 - color.r / 255;
+    CMY.y = 1 - color.g / 255;
+    CMY.z = 1 - color.b / 255;
+    return CMY;
+}
+
+inline ofColor CMY2RGB(const glm::vec3 CMY){
+    ofColor color;
+    color.r = (1 - CMY.x) * 255;
+    color.g = (1 - CMY.y) * 255;
+    color.b = (1 - CMY.z) * 255;
+    return color;
+}
+
+//--------------------------------------------------------------
+inline glm::vec4 RGB2CMYK(const ofColor& color){
+    glm::vec4 CMYK;
+//    glm::vec3 CMY;
+//    CMY = RGB2CMY(color);
+    float r = color.r / 255;
+    float g = color.g / 255;
+    float b = color.b / 255;
+    
+    
+    
+    float k = 1.0;
+    k = std::min(k, 1-r);
+    k = std::min(k, 1-g);
+    k = std::min(k, 1-b);
+    
+    CMYK.a = k;
+    CMYK.r = (1- r - k) / (1 - k);
+    CMYK.g = (1- g - k) / (1 - k);
+    CMYK.b = (1- b - k) / (1 - k);
+//    if (std::abs(CMYK.a - 1) < 1e-3) {
+//        CMYK.r = 0;
+//        CMYK.g = 0;
+//        CMYK.b = 0;
+//    }
+//    else {
+//        CMYK.r = (CMYK.r - k) / (1 - k);
+//        CMYK.g = (CMYK.g - k) / (1 - k);
+//        CMYK.b = (CMYK.b - k) / (1 - k);
+//    }
+    return CMYK;
+}
+
+inline ofColor CMYK2RGB(const glm::vec4 CMYK){
+    ofColor color;
+//    glm::vec3 CMY;
+//
+//    CMY.x = CMYK.r * (1 - CMYK.a) + CMYK.a;
+//    CMY.y = CMYK.g * (1 - CMYK.a) + CMYK.a;
+//    CMY.z = CMYK.b * (1 - CMYK.a) + CMYK.a;
+//    color = CMY2RGB(CMY);
+    float r = 1 - (CMYK.r*(1 - CMYK.a) + CMYK.a);
+    float g = 1 - (CMYK.g*(1 - CMYK.a) + CMYK.a);
+    float b = 1 - (CMYK.b*(1 - CMYK.a) + CMYK.a);
+    color.r = r * 255;
+    color.g = g * 255;
+    color.b = b * 255;
+    return color;
+}
+
+//--------------------------------------------------------------
+inline glm::vec3 RGB2YXY(const ofColor& color){
+    glm::vec3 YXY;
+    glm::vec3 XYZ;
+    
+    XYZ = RGB2XYZ(color);
+    
+    float temp = XYZ.x + XYZ.y + XYZ.z;
+    YXY.x = XYZ.y;
+    YXY.y = (temp==0) ? 0 : (XYZ.x / temp);
+    YXY.z = (temp==0) ? 0 : (XYZ.y / temp);
+    return YXY;
+}
+
+inline ofColor YXY2RGB(const glm::vec3& YXY){
+    ofColor color;
+    glm::vec3 RGB;
+    glm::vec3 XYZ;
+           
+    XYZ.x = YXY.y*(YXY.x / YXY.z);
+    XYZ.y = YXY.x;
+    XYZ.z = (1 - YXY.y - YXY.z)*(YXY.x / YXY.z);
+    color = XYZ2RGB(XYZ);
+    return color;
+}
+
 }//namespace convert
 
 namespace morph{
@@ -496,18 +497,18 @@ inline ofColor colorMorph(const glm::vec3& target, const glm::vec3& pos1, const 
         HSL2  = convert::RGB2HSL(col2);
         HSL   = detail::calcColor(HSL1, HSL2, ratio);
         color = convert::HSL2RGB(HSL);
-    }else if(type == colorType::HSB){
-        glm::vec3 HSB, HSB1, HSB2;
-        HSB1  = convert::RGB2HSB(col1);
-        HSB2  = convert::RGB2HSB(col2);
-        HSB   = detail::calcColor(HSB1, HSB2, ratio);
-        color = convert::HSB2RGB(HSB);
     }else if(type == colorType::HSV){
         glm::vec3 HSV, HSV1, HSV2;
         HSV1  = convert::RGB2HSV(col1);
         HSV2  = convert::RGB2HSV(col2);
         HSV   = detail::calcColor(HSV1, HSV2, ratio);
         color = convert::HSV2RGB(HSV);
+    }else if(type == colorType::HSB){
+        glm::vec3 HSB, HSB1, HSB2;
+        HSB1  = convert::RGB2HSB(col1);
+        HSB2  = convert::RGB2HSB(col2);
+        HSB   = detail::calcColor(HSB1, HSB2, ratio);
+        color = convert::HSB2RGB(HSB);
     }else if(type == colorType::LUV){
         glm::vec3 LUV, LUV1, LUV2;
         LUV1  = convert::RGB2LUV(col1);
