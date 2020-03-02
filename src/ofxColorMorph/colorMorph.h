@@ -272,7 +272,7 @@ inline glm::vec3 RGB2YXY(const ofColor& color){
     float temp = XYZ.x + XYZ.y + XYZ.z;
     YXY.x = XYZ.y;
     YXY.y = (temp==0) ? 0 : (XYZ.x / temp);
-    YXY.z = (temp==0) ? 0 : (XYZ.z / temp);
+    YXY.z = (temp==0) ? 0 : (XYZ.y / temp);
     return YXY;
 }
 
