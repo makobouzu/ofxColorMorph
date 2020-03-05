@@ -6,7 +6,7 @@ void ofApp::setup(){
     ofRectMode(OF_RECTMODE_CENTER);
     
     
-    for(auto i=0; i < 11; ++i){
+    for(auto i=0; i < 12; ++i){
         glm::vec3 left = {70, 50+i*40, 0.0};
         glm::vec3 right = {470, 50+i*40, 0.0};
         for(auto j = 0; j <= 400; j += 40){
@@ -16,7 +16,7 @@ void ofApp::setup(){
         }
     }
     
-    types = {"RGB", "HSL", "HSV", "HSB", "LUV", "LAB", "HunterLAB", "LCH", "CMY", "CMYK", "YXY"};
+    types = {"RGB", "HSL", "HSV", "HSB", "LUV", "LAB", "HunterLAB", "LCH", "CMY", "CMYK", "YXY", "XYZ"};
 }
 
 //--------------------------------------------------------------
@@ -32,7 +32,7 @@ void ofApp::draw(){
     }
     
     ofSetColor(255);
-    for(auto i = 0; i < 11; ++i){
+    for(auto i = 0; i < 12; ++i){
         ofDrawBitmapString(types.at(i), 520, 70+i*40);
     }
 }

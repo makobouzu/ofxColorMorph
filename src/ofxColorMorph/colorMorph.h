@@ -12,7 +12,7 @@ namespace ofx{
 namespace colorMorph{
 
 enum class colorType{
-    RGB, HSL, HSV, HSB, LUV, LAB, HunterLAB, LCH, CMY, CMYK, YXY
+    RGB, HSL, HSV, HSB, LUV, LAB, HunterLAB, LCH, CMY, CMYK, YXY, XYZ
 };
 
 namespace detail{
@@ -389,17 +389,18 @@ inline ofColor   LCH2RGB(const glm::vec3& LCH){
 //--------------------------------------------------------------
 inline glm::vec3 RGB2CMY(const ofColor& color){
     glm::vec3 CMY;
-    CMY.x = 1 - color.r / 255;
-    CMY.y = 1 - color.g / 255;
-    CMY.z = 1 - color.b / 255;
+    glm::vec3 element;
+    CMY.x = 1 - (color.r / 255);
+    CMY.y = 1 - (color.g / 255);
+    CMY.z = 1 - (color.b / 255);
     return CMY;
 }
 
 inline ofColor CMY2RGB(const glm::vec3 CMY){
     ofColor color;
-    color.r = (1 - CMY.x) * 255;
-    color.g = (1 - CMY.y) * 255;
-    color.b = (1 - CMY.z) * 255;
+    color.r = (1 - CMY.r) * 255;
+    color.g = (1 - CMY.g) * 255;
+    color.b = (1 - CMY.b) * 255;
     return color;
 }
 
@@ -551,6 +552,12 @@ inline ofColor colorMorph(const glm::vec3& target, const glm::vec3& pos1, const 
         YXY2  = convert::RGB2YXY(col2);
         YXY   = detail::calcColor(YXY1, YXY2, ratio);
         color = convert::YXY2RGB(YXY);
+    }else if(type == colorType::XYZ){
+        glm::vec3 XYZ, XYZ1, XYZ2;
+        XYZ1  = convert::RGB2XYZ(col1);
+        XYZ2  = convert::RGB2XYZ(col2);
+        XYZ   = detail::calcColor(XYZ1, XYZ2, ratio);
+        color = convert::XYZ2RGB(XYZ);
     }
     return color;
 }
