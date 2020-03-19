@@ -371,6 +371,7 @@ inline glm::vec3 RGB2LCH(const ofColor& color){
     LCH.z = h;
     return LCH;
 }
+
 inline ofColor   LCH2RGB(const glm::vec3& LCH){
     ofColor color;
     glm::vec3 LAB, LCH_;
@@ -389,65 +390,46 @@ inline ofColor   LCH2RGB(const glm::vec3& LCH){
 //--------------------------------------------------------------
 inline glm::vec3 RGB2CMY(const ofColor& color){
     glm::vec3 CMY;
-    glm::vec3 element;
-    CMY.x = 1 - (color.r / 255);
-    CMY.y = 1 - (color.g / 255);
-    CMY.z = 1 - (color.b / 255);
+    CMY.x = 1. - color.r / 255.;
+    CMY.y = 1. - color.g / 255.;
+    CMY.z = 1. - color.b / 255.;
     return CMY;
 }
 
 inline ofColor CMY2RGB(const glm::vec3 CMY){
     ofColor color;
-    color.r = (1 - CMY.r) * 255;
-    color.g = (1 - CMY.g) * 255;
-    color.b = (1 - CMY.b) * 255;
+    color.r = (1. - CMY.x) * 255;
+    color.g = (1. - CMY.y) * 255;
+    color.b = (1. - CMY.z) * 255;
     return color;
 }
 
 //--------------------------------------------------------------
 inline glm::vec4 RGB2CMYK(const ofColor& color){
     glm::vec4 CMYK;
-//    glm::vec3 CMY;
-//    CMY = RGB2CMY(color);
-    float r = color.r / 255;
-    float g = color.g / 255;
-    float b = color.b / 255;
     
-    
+    float r = color.r / 255.;
+    float g = color.g / 255.;
+    float b = color.b / 255.;
     
     float k = 1.0;
-    k = std::min(k, 1-r);
-    k = std::min(k, 1-g);
-    k = std::min(k, 1-b);
+    k = std::min(k, 1 - r);
+    k = std::min(k, 1 - g);
+    k = std::min(k, 1 - b);
     
     CMYK.a = k;
-    CMYK.r = (1- r - k) / (1 - k);
-    CMYK.g = (1- g - k) / (1 - k);
-    CMYK.b = (1- b - k) / (1 - k);
-//    if (std::abs(CMYK.a - 1) < 1e-3) {
-//        CMYK.r = 0;
-//        CMYK.g = 0;
-//        CMYK.b = 0;
-//    }
-//    else {
-//        CMYK.r = (CMYK.r - k) / (1 - k);
-//        CMYK.g = (CMYK.g - k) / (1 - k);
-//        CMYK.b = (CMYK.b - k) / (1 - k);
-//    }
+    
+    CMYK.r = (1. - r - k) / (1. - k);
+    CMYK.g = (1. - g - k) / (1. - k);
+    CMYK.b = (1. - b - k) / (1. - k);
     return CMYK;
 }
 
 inline ofColor CMYK2RGB(const glm::vec4 CMYK){
     ofColor color;
-//    glm::vec3 CMY;
-//
-//    CMY.x = CMYK.r * (1 - CMYK.a) + CMYK.a;
-//    CMY.y = CMYK.g * (1 - CMYK.a) + CMYK.a;
-//    CMY.z = CMYK.b * (1 - CMYK.a) + CMYK.a;
-//    color = CMY2RGB(CMY);
-    float r = 1 - (CMYK.r*(1 - CMYK.a) + CMYK.a);
-    float g = 1 - (CMYK.g*(1 - CMYK.a) + CMYK.a);
-    float b = 1 - (CMYK.b*(1 - CMYK.a) + CMYK.a);
+    float r = 1. - (CMYK.r*(1. - CMYK.a) + CMYK.a);
+    float g = 1. - (CMYK.g*(1. - CMYK.a) + CMYK.a);
+    float b = 1. - (CMYK.b*(1. - CMYK.a) + CMYK.a);
     color.r = r * 255;
     color.g = g * 255;
     color.b = b * 255;
