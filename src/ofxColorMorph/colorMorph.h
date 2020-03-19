@@ -359,12 +359,12 @@ inline glm::vec3 RGB2LCH(const ofColor& color){
     float c = sqrt(LAB.y*LAB.y + LAB.z*LAB.z);
     float h = atan2(LAB.z, LAB.y);
     
-    h = h / M_PI * 180;
+    h = h / M_PI * 180.;
     if (h < 0) {
-        h += 360;
+        h += 360.;
     }
-    else if (h >= 360) {
-        h -= 360;
+    else if (h >= 360.) {
+        h -= 360.;
     }
     LCH.x = l;
     LCH.y = c;
@@ -377,11 +377,11 @@ inline ofColor   LCH2RGB(const glm::vec3& LCH){
     glm::vec3 LAB, LCH_;
     LCH_ = LCH;
     
-    LCH_.z = LCH.z * (M_PI / 180);
+    LCH_.z = LCH.z * (M_PI / 180.);
     
     LAB.x = LCH_.x;
-    LAB.y = cos(LCH_.z)*LCH_.y;
-    LAB.z = sin(LCH_.z)*LCH_.y;
+    LAB.y = cosf(LCH_.z)*LCH_.y;
+    LAB.z = sinf(LCH_.z)*LCH_.y;
     
     color = LAB2RGB(LAB);
     return color;

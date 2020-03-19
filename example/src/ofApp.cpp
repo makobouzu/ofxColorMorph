@@ -11,7 +11,7 @@ void ofApp::setup(){
     
     for(auto i=0; i < 12; ++i){
         glm::vec3 left = {270, 120+i*40, 0.0};
-        glm::vec3 right = {690, 120+i*40, 0.0};
+        glm::vec3 right = {670, 120+i*40, 0.0};
         for(auto j = 0; j <= 400; j += 40){
             glm::vec3 pos = {j+270, 120+i*40, 0.0};
             ofColor color = colorMorph(pos, left, col1, right, col2, static_cast<type>(i));
@@ -61,7 +61,7 @@ void ofApp::draw(){
 void ofApp::generate(ofColor col1, ofColor col2){
     for(auto i=0; i < 12; ++i){
         glm::vec3 left = {270, 120+i*40, 0.0};
-        glm::vec3 right = {690, 120+i*40, 0.0};
+        glm::vec3 right = {670, 120+i*40, 0.0};
         for(auto j = 0; j <= 400; j += 40){
             glm::vec3 pos = {j+270, 120+i*40, 0.0};
             ofColor color = colorMorph(pos, left, col1, right, col2, static_cast<type>(i));
