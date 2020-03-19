@@ -33,8 +33,8 @@ void ofApp::draw(){
     
     gui.begin();
     if(window){
-        ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiSetCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(250, 600), ImGuiSetCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiSetCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(250, 500), ImGuiSetCond_Once);
         ImGui::Begin("Gui", &window);
         ImGui::ColorPicker3("left color", &guiCol1[0]);
         ImGui::ColorPicker3("right color", &guiCol2[0]);

@@ -3,12 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>files</key>
-	<dict>
-		<key>Resources/icon-debug.icns</key>
-		<data>
-		PK/FgaLxSEW4pVQhtgMTghsTUq4=
-		</data>
-	</dict>
+	<dict/>
 	<key>files2</key>
 	<dict>
 		<key>Frameworks/libfmodex.dylib</key>
@@ -19,17 +14,6 @@
 			</data>
 			<key>requirement</key>
 			<string>cdhash H"9f0707993732af6be59d531f00a97b1a0496a655" or cdhash H"262e792b2244bb2ac4073ec46be7152c0aed1ebb" or cdhash H"42b474ff863109132be7fc8602ade09e9c7abb8e" or cdhash H"2a1d7ed412ed78ded7bc1c3f04491ee91dab25b3"</string>
-		</dict>
-		<key>Resources/icon-debug.icns</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			PK/FgaLxSEW4pVQhtgMTghsTUq4=
-			</data>
-			<key>hash2</key>
-			<data>
-			3XSbGmlR3OhU9h6wZodURMhm0Su03tPkfZlW6khxq0g=
-			</data>
 		</dict>
 	</dict>
 	<key>rules</key>

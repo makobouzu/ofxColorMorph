@@ -3,7 +3,7 @@
 
 //========================================================================
 int main( ){
-    ofSetupOpenGL( 1000, 800, OF_WINDOW );
+    ofSetupOpenGL( 850, 700, OF_WINDOW );
     ofRunApp(new ofApp);
     return 0;
 }
